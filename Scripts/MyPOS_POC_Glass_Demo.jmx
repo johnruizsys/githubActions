@@ -1,0 +1,1182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan">
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="URLDev" elementType="Argument">
+            <stringProp name="Argument.name">URLDev</stringProp>
+            <stringProp name="Argument.value">component2.mypos.com</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="URLActivationCode" elementType="Argument">
+            <stringProp name="Argument.name">URLActivationCode</stringProp>
+            <stringProp name="Argument.value">component2.mypos.com</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="PortMobileDev" elementType="Argument">
+            <stringProp name="Argument.name">PortMobileDev</stringProp>
+            <stringProp name="Argument.value">10973</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="URLMobileDev" elementType="Argument">
+            <stringProp name="Argument.name">URLMobileDev</stringProp>
+            <stringProp name="Argument.value">component.mypos.com</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="Port" elementType="Argument">
+            <stringProp name="Argument.name">Port</stringProp>
+            <stringProp name="Argument.value">10970</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="OTPCode" elementType="Argument">
+            <stringProp name="Argument.name">OTPCode</stringProp>
+            <stringProp name="Argument.value">1111</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="imei" elementType="Argument">
+            <stringProp name="Argument.name">imei</stringProp>
+            <stringProp name="Argument.value">${__RandomString(16,abcdef0123456789,imei)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="android-id" elementType="Argument">
+            <stringProp name="Argument.name">android-id</stringProp>
+            <stringProp name="Argument.value">${__RandomString(16,abcdef0123456789,android-id)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="payout_period_id" elementType="Argument">
+            <stringProp name="Argument.name">payout_period_id</stringProp>
+            <stringProp name="Argument.value">139</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+    </TestPlan>
+    <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="Host" elementType="Argument">
+            <stringProp name="Argument.name">Host</stringProp>
+            <stringProp name="Argument.value">demopos1.mypos.com</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="Port" elementType="Argument">
+            <stringProp name="Argument.name">Port</stringProp>
+            <stringProp name="Argument.value">443</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="POS_GlassActivation">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Usernames And Passwords">
+          <stringProp name="delimiter">,</stringProp>
+          <stringProp name="fileEncoding"></stringProp>
+          <stringProp name="filename">C:/Users/John.Ruiz.ENCORA/Documents/Scripts/Files/POS_UsernamesAndAccounts.csv</stringProp>
+          <boolProp name="ignoreFirstLine">false</boolProp>
+          <boolProp name="quotedData">false</boolProp>
+          <boolProp name="recycle">true</boolProp>
+          <stringProp name="shareMode">shareMode.all</stringProp>
+          <boolProp name="stopThread">false</boolProp>
+          <stringProp name="variableNames">Username,Password,AccountNumber</stringProp>
+        </CSVDataSet>
+        <hashTree/>
+        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor">
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import java.security.MessageDigest
+
+// Get the value from the CSV
+def plainText = vars.get(&quot;Password&quot;) 
+
+MessageDigest md = MessageDigest.getInstance(&quot;MD5&quot;)
+md.update(plainText.bytes)
+byte[] digest = md.digest()
+StringBuilder sb = new StringBuilder()
+for (byte b : digest) {
+    sb.append(String.format(&quot;%02x&quot;, b &amp; 0xff))
+}
+def passwordmd5 = sb.toString()
+
+// Store the MD5 in a JMeter variable
+vars.put(&quot;PasswordMD5&quot;, passwordmd5)
+
+// Log the MD5 hash to the console for debugging
+log.info(&quot;Computed MD5 hash for Password: &quot; + passwordmd5)</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223PreProcessor>
+        <hashTree/>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="POS_GlassActivation_01_SerialNumberGeneration">
+          <boolProp name="TransactionController.parent">true</boolProp>
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Serial Number Generation">
+            <stringProp name="HTTPSampler.domain">${URLDev}</stringProp>
+            <stringProp name="HTTPSampler.port">${Port}</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">/api/terminal-provisioning-service/generate-serial-number</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&#xd;
+{    &quot;data&quot;:&quot;{\&quot;imei\&quot;:\&quot;${imei}\&quot;,\&quot;android-id\&quot;:\&quot;${android-id}\&quot;,\&quot;attestation-request-id\&quot;:\&quot;0000\&quot;,\&quot;pack-id\&quot;:10295,\&quot;model\&quot;:\&quot;TOPM\&quot;,\&quot;hash\&quot;:\&quot;00000000000000000000000000000000\&quot;}&quot;,   &quot;version&quot;: &quot;149&quot; &#xd;
+}&#xd;
+</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">application/json</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="Boundary Extractor" enabled="true">
+              <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+              <stringProp name="BoundaryExtractor.refname">SerialNumber</stringProp>
+              <stringProp name="BoundaryExtractor.lboundary">&quot;serial-number\&quot;:\&quot;</stringProp>
+              <stringProp name="BoundaryExtractor.rboundary">\&quot;}</stringProp>
+              <stringProp name="BoundaryExtractor.default">NOT_FOUND</stringProp>
+              <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+              <stringProp name="BoundaryExtractor.match_number">1</stringProp>
+            </BoundaryExtractor>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-1113100990">serial-number</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">16</intProp>
+              <stringProp name="Assertion.scope">all</stringProp>
+              <stringProp name="Scope.variable">SerialNumber</stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="POS_GlassActivation_02_ActivationCodeRequest" enabled="true">
+          <boolProp name="TransactionController.parent">true</boolProp>
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="ActivationCodeRequest">
+            <stringProp name="HTTPSampler.domain">${URLDev}</stringProp>
+            <stringProp name="HTTPSampler.port">${Port}</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">/api/terminal-provisioning-service/generate-activation-code</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+   &quot;data&quot;:&quot;{\&quot;serial-number\&quot;:\&quot;${SerialNumber}\&quot;,\&quot;model\&quot;:\&quot;TOPM\&quot;}&quot;,&#xd;
+   &quot;version&quot;:&quot;168&quot;&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">application/json</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="1240566852">activation-code</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">16</intProp>
+              <stringProp name="Assertion.scope">all</stringProp>
+              <stringProp name="Scope.variable">ActivationCode</stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="Boundary Extractor" enabled="true">
+              <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+              <stringProp name="BoundaryExtractor.refname">ActivationCode</stringProp>
+              <stringProp name="BoundaryExtractor.lboundary">&quot;activation-code\&quot;:\&quot;</stringProp>
+              <stringProp name="BoundaryExtractor.rboundary">\&quot;}</stringProp>
+              <stringProp name="BoundaryExtractor.default">NOT_FOUND</stringProp>
+              <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+              <stringProp name="BoundaryExtractor.match_number">1</stringProp>
+            </BoundaryExtractor>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="POS_GlassActivation_03_Login" enabled="true">
+          <boolProp name="TransactionController.parent">true</boolProp>
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login">
+            <stringProp name="TestPlan.comments">https://component.mypos.com:10973/</stringProp>
+            <stringProp name="HTTPSampler.domain">${URLMobileDev}</stringProp>
+            <stringProp name="HTTPSampler.port">${PortMobileDev}</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">/1.1/login</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+&#xd;
+  &quot;email_address&quot;: &quot;${Username}&quot;,&#xd;
+&#xd;
+  &quot;password&quot;: &quot;${PasswordMD5}&quot;,&#xd;
+&#xd;
+  &quot;uuid&quot;: &quot;${Username}&quot;,&#xd;
+&#xd;
+  &quot;otp_method&quot;: 1,&#xd;
+&#xd;
+  &quot;new_device&quot;: true,&#xd;
+&#xd;
+  &quot;device_model&quot;: &quot;XIAOMI 23078PND5G&quot;,&#xd;
+&#xd;
+  &quot;device_os_version&quot;: &quot;14&quot;,&#xd;
+&#xd;
+  &quot;device_os_api_level&quot;: 34,&#xd;
+&#xd;
+  &quot;device_timezone&quot;: &quot;Eastern European Standard Time&quot;,&#xd;
+&#xd;
+  &quot;device_fingerprint&quot;: &quot;XIAOMI/COROT_EEA&quot;,&#xd;
+&#xd;
+  &quot;device_uuid&quot;: &quot;${__UUID}&quot;,&#xd;
+&#xd;
+  &quot;os&quot;: &quot;2&quot;,&#xd;
+&#xd;
+  &quot;version&quot;: &quot;306&quot;,&#xd;
+&#xd;
+  &quot;application&quot;: 1,&#xd;
+&#xd;
+  &quot;language&quot;: &quot;en&quot;,&#xd;
+&#xd;
+  &quot;session&quot;: &quot;&quot;&#xd;
+&#xd;
+}&#xd;
+&#xd;
+&#xd;
+</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">application/json;charset=utf-8 </stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name"></stringProp>
+                  <stringProp name="Header.value"></stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="Regular Expression Extractor" enabled="true">
+              <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+              <stringProp name="RegexExtractor.refname">login_id</stringProp>
+              <stringProp name="RegexExtractor.regex">\&quot;login_id\\&quot;:(.*?),\\&quot;</stringProp>
+              <stringProp name="RegexExtractor.template">$1$</stringProp>
+              <stringProp name="RegexExtractor.default">NOT_FOUND</stringProp>
+              <boolProp name="RegexExtractor.default_empty_value">false</boolProp>
+              <stringProp name="RegexExtractor.match_number">1</stringProp>
+              <stringProp name="TestPlan.comments">\&quot;login_id\\&quot;:(.*?),\\&quot;</stringProp>
+            </RegexExtractor>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="1058972163">Login verification needed</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">16</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="POS_GlassActivation_04_Login_Secure" enabled="true">
+          <boolProp name="TransactionController.parent">true</boolProp>
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="LoginSecure">
+            <stringProp name="TestPlan.comments">https://component.mypos.com:10973/</stringProp>
+            <stringProp name="HTTPSampler.domain">${URLMobileDev}</stringProp>
+            <stringProp name="HTTPSampler.port">${PortMobileDev}</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">/1.1/login_secure</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+  &quot;email_address&quot;: &quot;${Username}&quot;,&#xd;
+  &quot;password&quot;: &quot;${PasswordMD5}&quot;,&#xd;
+  &quot;uuid&quot;: &quot;${Username}&quot;,&#xd;
+  &quot;login_id&quot;: ${login_id},&#xd;
+  &quot;otp_method&quot;: 1,&#xd;
+  &quot;new_device&quot;: true,&#xd;
+  &quot;verification_code&quot;: &quot;${OTPCode}&quot;, &#xd;
+  &quot;device_model&quot;: &quot;XIAOMI 23078PND5G&quot;,&#xd;
+  &quot;device_os_version&quot;: &quot;14&quot;,&#xd;
+  &quot;device_os_api_level&quot;: 34,&#xd;
+  &quot;device_timezone&quot;: &quot;Eastern European Standard Time&quot;,&#xd;
+  &quot;device_fingerprint&quot;: &quot;XIAOMI/COROT_EEA/COROT:14/UP1A1/V816.0.6.0.UMLEUXM:USER/RELEASE-KEYS&quot;,&#xd;
+  &quot;device_uuid&quot;: &quot;${__UUID}&quot;,&#xd;
+  &quot;os&quot;: &quot;2&quot;,&#xd;
+  &quot;version&quot;: &quot;306&quot;,&#xd;
+  &quot;application&quot;: 1,&#xd;
+  &quot;language&quot;: &quot;en&quot;,&#xd;
+  &quot;session&quot;: &quot;&quot;&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">application/json</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="Regular Expression Extractor" enabled="false">
+              <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+              <stringProp name="RegexExtractor.refname">session_id</stringProp>
+              <stringProp name="RegexExtractor.regex">&quot;session\\&quot;:\\&quot;(.*?)\\&quot;}&quot;</stringProp>
+              <stringProp name="RegexExtractor.template">$1$</stringProp>
+              <stringProp name="RegexExtractor.default"></stringProp>
+              <boolProp name="RegexExtractor.default_empty_value">false</boolProp>
+              <stringProp name="RegexExtractor.match_number">1</stringProp>
+              <stringProp name="TestPlan.comments">&quot;session\\&quot;:\\&quot;(.*?)\\&quot;}&quot;</stringProp>
+            </RegexExtractor>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-1551829519">Command completed successfully</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">16</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="Boundary Extractor" enabled="true">
+              <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+              <stringProp name="BoundaryExtractor.refname">Session</stringProp>
+              <stringProp name="BoundaryExtractor.lboundary">&quot;session\&quot;:\&quot;</stringProp>
+              <stringProp name="BoundaryExtractor.rboundary">\&quot;}</stringProp>
+              <stringProp name="BoundaryExtractor.default">NOT_FOUND</stringProp>
+              <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+              <stringProp name="BoundaryExtractor.match_number">1</stringProp>
+            </BoundaryExtractor>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="POS_GlassActivation_05_Subscription" enabled="true">
+          <boolProp name="TransactionController.parent">true</boolProp>
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request_Subscription">
+            <stringProp name="HTTPSampler.domain">${URLMobileDev}</stringProp>
+            <stringProp name="HTTPSampler.port">${PortMobileDev}</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">/1.1/glass/subscriptions/subscribe</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+  &quot;device_os_version&quot;: &quot;17.5.1&quot;,&#xd;
+  &quot;uuid&quot;: &quot;${Username}&quot;,&#xd;
+  &quot;os&quot;: &quot;1&quot;,&#xd;
+  &quot;settlement_account_number&quot;: &quot;${AccountNumber}&quot;,&#xd;
+  &quot;payout_type&quot;: 3,&#xd;
+  &quot;device_model&quot;: &quot;iPhone16,2&quot;,&#xd;
+  &quot;activation_code&quot;: &quot;${ActivationCode}&quot;,&#xd;
+  &quot;transaction_currency&quot;: &quot;EUR&quot;,&#xd;
+  &quot;language&quot;: &quot;en&quot;,&#xd;
+  &quot;billing_descriptor&quot;: &quot;RANDOM&quot;,&#xd;
+  &quot;version&quot;: &quot;2.14&quot;,&#xd;
+  &quot;is_used_from_employee&quot;: false,&#xd;
+  &quot;session&quot;: &quot;${Session}&quot;,&#xd;
+  &quot;device_uuid&quot;: &quot;${__UUID}&quot;,&#xd;
+  &quot;application&quot;: 2,&#xd;
+  &quot;device_os_api_level&quot;: &quot;&quot;,&#xd;
+  &quot;device_timezone&quot;: &quot;Central European Standard Time&quot;,&#xd;
+  &quot;payout_period_id&quot;: ${payout_period_id},&#xd;
+  &quot;ip&quot;: &quot;93.150.200.17&quot;,&#xd;
+  &quot;document_codes&quot;: [&#xd;
+   &quot;GTC17802&quot;,&#xd;
+   &quot;EUG13303&quot;&#xd;
+  ]&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">application/json</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-1551829519">Command completed successfully</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">16</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="MyPOSGlass_Acquiring" enabled="false">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="0320" enabled="true"/>
+        <hashTree>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="DataFile_320_DataSet_1">
+            <stringProp name="delimiter">,</stringProp>
+            <stringProp name="fileEncoding"></stringProp>
+            <stringProp name="filename">C:/Users/John.Ruiz.ENCORA/Documents/Scripts/Files/POS_320_DataSet1.csv</stringProp>
+            <boolProp name="ignoreFirstLine">false</boolProp>
+            <boolProp name="quotedData">false</boolProp>
+            <boolProp name="recycle">true</boolProp>
+            <stringProp name="shareMode">shareMode.all</stringProp>
+            <boolProp name="stopThread">false</boolProp>
+            <stringProp name="variableNames">Request_0200,Request_0320</stringProp>
+          </CSVDataSet>
+          <hashTree/>
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Controller">
+            <stringProp name="IfController.condition">${__javaScript(&quot;${Request_0200}&quot; != &quot;&quot;)}</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+            <boolProp name="IfController.useExpression">true</boolProp>
+          </IfController>
+          <hashTree>
+            <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SSLConnectionEstablishment">
+              <boolProp name="TransactionController.parent">true</boolProp>
+              <boolProp name="TransactionController.includeTimers">false</boolProp>
+            </TransactionController>
+            <hashTree>
+              <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="ConnectionEstablishment">
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.OutputStream
+import java.io.InputStream
+
+
+// Create SSLSocketFactory with the trust store
+SSLSocketFactory sslSocketFactory = SSLSocketFactory.getDefault()
+
+// Create SSLSocket and connect to the server
+SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(&quot;${Host}&quot;, ${Port})
+sslSocket.startHandshake()
+
+// Socket creation variable
+vars.putObject(&quot;sslSocket&quot;, sslSocket)
+
+// InputStream and OutputStream variables 
+vars.putObject(&quot;sslOutputStream&quot;, sslSocket.getOutputStream())
+vars.putObject(&quot;sslInputStream&quot;, sslSocket.getInputStream())</stringProp>
+              </JSR223Sampler>
+              <hashTree/>
+            </hashTree>
+            <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="POS_GlassTransaction_0320_01_MTI0200">
+              <boolProp name="TransactionController.parent">true</boolProp>
+              <boolProp name="TransactionController.includeTimers">false</boolProp>
+            </TransactionController>
+            <hashTree>
+              <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="0200">
+                <collectionProp name="ModuleController.node_path">
+                  <stringProp name="764597751">Test Plan</stringProp>
+                  <stringProp name="764597751">Test Plan</stringProp>
+                  <stringProp name="1479554">0200</stringProp>
+                </collectionProp>
+              </ModuleController>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Flow Control Action" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">1000</stringProp>
+          </TestAction>
+          <hashTree/>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SSLConnectionEstablishment">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="ConnectionEstablishment">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.OutputStream
+import java.io.InputStream
+
+
+// Create SSLSocketFactory with the trust store
+SSLSocketFactory sslSocketFactory = SSLSocketFactory.getDefault()
+
+// Create SSLSocket and connect to the server
+SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(&quot;${Host}&quot;, ${Port})
+sslSocket.startHandshake()
+
+// Socket creation variable
+vars.putObject(&quot;sslSocket&quot;, sslSocket)
+
+// InputStream and OutputStream variables 
+vars.putObject(&quot;sslOutputStream&quot;, sslSocket.getOutputStream())
+vars.putObject(&quot;sslInputStream&quot;, sslSocket.getInputStream())</stringProp>
+            </JSR223Sampler>
+            <hashTree/>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="POS_GlassTransaction_0320_02_MTI0320">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler 320">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.OutputStream
+import java.io.InputStream
+
+
+
+// Retrieve the socket from the JMeter context
+SSLSocket sslSocket = vars.getObject(&quot;sslSocket&quot;)
+OutputStream outputStream = vars.getObject(&quot;sslOutputStream&quot;)
+InputStream inputStream = vars.getObject(&quot;sslInputStream&quot;)
+
+// Check if the socket is available
+if (sslSocket != null &amp;&amp; outputStream != null &amp;&amp; inputStream != null) {
+// Convert hexadecimal string to bytes
+String hexData = vars.get(&quot;Request_0320&quot;)
+// Example hexadecimal string
+byte[] requestData = hexData.decodeHex()
+
+// Send data
+//OutputStream outputStream = sslSocket.getOutputStream()
+outputStream.write(requestData)
+outputStream.flush()
+
+// Receive response
+//InputStream inputStream = sslSocket.getInputStream()
+def responseBytes = []
+byte[] buffer = new byte[1024]
+int bytesRead
+int totalBytesRead = 0
+int expectedLength = 100
+
+while (totalBytesRead &lt;= expectedLength) {
+    bytesRead = inputStream.read(buffer)
+    if (bytesRead == -1) break
+    responseBytes += buffer[0..(bytesRead - 1)]
+    totalBytesRead += bytesRead
+}
+
+// Convert response bytes to hexadecimal string
+String responseDataHex = responseBytes.collect { String.format(&apos;%02X&apos;, it) }.join()
+
+// Close streams and socket
+    inputStream.close()
+    outputStream.close()
+    sslSocket.close()
+    vars.remove(&quot;sslSocket&quot;)
+    vars.remove(&quot;sslOutputStream&quot;)
+    vars.remove(&quot;sslInputStream&quot;)
+// Log response as hexadecimal
+log.info(&quot;Response (Hexadecimal): &quot; + responseDataHex)
+
+ // Log response length
+    int responseLength = responseDataHex.length()
+    int responseSizeInBytes = responseBytes.size()
+    vars.putObject(&apos;responseLength&apos;, responseLength)
+	vars.putObject(&apos;responseSizeInBytes&apos;, responseSizeInBytes)
+    log.info(&quot;Response Length (Hexadecimal)(Test Data 1 320): &quot; + responseLength)
+    log.info(&quot;Response Length (Bytes)(Test Data 1 320): &quot; + responseSizeInBytes)
+
+// Set response data for the sampler
+SampleResult.setResponseData(responseDataHex, &quot;UTF-8&quot;)
+
+}else { log.warn(&quot;SSL Socket not found in context. Ensure the PreProcessor executed correctly.&quot;)}
+// Close streams and socket
+//inputStream.close()
+//outputStream.close()
+//sslSocket.close()</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223Sampler>
+            <hashTree>
+              <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR223 Assertion">
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="script">import org.apache.jmeter.assertions.AssertionResult
+//int responseLength = vars.getObject(&quot;responseLength&quot;)
+//int responseSizeInBytes = vars.getObject(&quot;responseSizeInBytes&quot;)
+def minLength = 50
+def responseLength = vars.getObject(&quot;responseLength&quot;)
+def responseSizeInBytes = vars.getObject(&quot;responseSizeInBytes&quot;)
+
+def assertionResult = new org.apache.jmeter.assertions.AssertionResult(&quot;Response Length Assertion&quot;)
+
+if (responseLength &lt; minLength) {
+    // Set the assertion failure
+    prev.setSuccessful(false)
+    prev.setResponseMessage(&quot;Response length is less than expected.&quot;)
+} else {
+    // Clear any previous assertion failure
+    prev.setSuccessful(true)
+    prev.setResponseMessage(&quot;Response length meets expected criteria.&quot;)
+}
+</stringProp>
+                <stringProp name="scriptLanguage">groovy</stringProp>
+              </JSR223Assertion>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="0400"/>
+        <hashTree>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="POS_400_DataSet3">
+            <stringProp name="filename">C:/Users/John.Ruiz.ENCORA/Documents/Scripts/Files/POS_400_DataSet3.csv</stringProp>
+            <stringProp name="fileEncoding"></stringProp>
+            <stringProp name="variableNames">Request_0200,Request_0400</stringProp>
+            <boolProp name="ignoreFirstLine">false</boolProp>
+            <stringProp name="delimiter">,</stringProp>
+            <boolProp name="quotedData">false</boolProp>
+            <boolProp name="recycle">true</boolProp>
+            <boolProp name="stopThread">false</boolProp>
+            <stringProp name="shareMode">shareMode.all</stringProp>
+          </CSVDataSet>
+          <hashTree/>
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Controller">
+            <stringProp name="IfController.condition">${__javaScript(&quot;${Request_0200}&quot; != &quot;&quot;)}</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+            <boolProp name="IfController.useExpression">true</boolProp>
+          </IfController>
+          <hashTree>
+            <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SSLConnectionEstablishment">
+              <boolProp name="TransactionController.parent">true</boolProp>
+              <boolProp name="TransactionController.includeTimers">false</boolProp>
+            </TransactionController>
+            <hashTree>
+              <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="ConnectionEstablishment">
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.OutputStream
+import java.io.InputStream
+
+
+// Create SSLSocketFactory with the trust store
+SSLSocketFactory sslSocketFactory = SSLSocketFactory.getDefault()
+
+// Create SSLSocket and connect to the server
+SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(&quot;${Host}&quot;, ${Port})
+sslSocket.startHandshake()
+
+// Socket creation variable
+vars.putObject(&quot;sslSocket&quot;, sslSocket)
+
+// InputStream and OutputStream variables 
+vars.putObject(&quot;sslOutputStream&quot;, sslSocket.getOutputStream())
+vars.putObject(&quot;sslInputStream&quot;, sslSocket.getInputStream())</stringProp>
+              </JSR223Sampler>
+              <hashTree/>
+            </hashTree>
+            <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="POS_GlassTransaction_0400_01_MTI0200" enabled="true">
+              <boolProp name="TransactionController.parent">true</boolProp>
+              <boolProp name="TransactionController.includeTimers">false</boolProp>
+            </TransactionController>
+            <hashTree>
+              <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="0200" enabled="true">
+                <collectionProp name="ModuleController.node_path">
+                  <stringProp name="764597751">Test Plan</stringProp>
+                  <stringProp name="764597751">Test Plan</stringProp>
+                  <stringProp name="1479554">0200</stringProp>
+                </collectionProp>
+              </ModuleController>
+              <hashTree/>
+            </hashTree>
+            <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Flow Control Action" enabled="true">
+              <intProp name="ActionProcessor.action">1</intProp>
+              <intProp name="ActionProcessor.target">0</intProp>
+              <stringProp name="ActionProcessor.duration">1000</stringProp>
+            </TestAction>
+            <hashTree/>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SSLConnectionEstablishment">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="ConnectionEstablishment">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.OutputStream
+import java.io.InputStream
+
+
+// Create SSLSocketFactory with the trust store
+SSLSocketFactory sslSocketFactory = SSLSocketFactory.getDefault()
+
+// Create SSLSocket and connect to the server
+SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(&quot;${Host}&quot;, ${Port})
+sslSocket.startHandshake()
+
+// Socket creation variable
+vars.putObject(&quot;sslSocket&quot;, sslSocket)
+
+// InputStream and OutputStream variables 
+vars.putObject(&quot;sslOutputStream&quot;, sslSocket.getOutputStream())
+vars.putObject(&quot;sslInputStream&quot;, sslSocket.getInputStream())</stringProp>
+            </JSR223Sampler>
+            <hashTree/>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="POS_GlassTransaction_0400_02_MTI0400">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler 400">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.OutputStream
+import java.io.InputStream
+
+// Retrieve the socket from the JMeter context
+SSLSocket sslSocket = vars.getObject(&quot;sslSocket&quot;)
+OutputStream outputStream = vars.getObject(&quot;sslOutputStream&quot;)
+InputStream inputStream = vars.getObject(&quot;sslInputStream&quot;)
+
+// Check if the socket is available
+if (sslSocket != null &amp;&amp; outputStream != null &amp;&amp; inputStream != null) {
+// Convert hexadecimal string to bytes
+String hexData = vars.get(&quot;Request_0400&quot;)
+// Example hexadecimal string
+byte[] requestData = hexData.decodeHex()
+
+// Send data
+//OutputStream outputStream = sslSocket.getOutputStream()
+outputStream.write(requestData)
+outputStream.flush()
+
+// Receive response
+//InputStream inputStream = sslSocket.getInputStream()
+
+def responseBytes = []
+byte[] buffer = new byte[1024]
+int bytesRead
+int totalBytesRead = 0
+int expectedLength = 90
+
+while (totalBytesRead &lt;= expectedLength) {
+    bytesRead = inputStream.read(buffer)
+    if (bytesRead == -1) break
+    responseBytes += buffer[0..(bytesRead - 1)]
+    totalBytesRead += bytesRead
+}
+
+// Convert response bytes to hexadecimal string
+String responseDataHex = responseBytes.collect { String.format(&apos;%02X&apos;, it) }.join()
+
+// Log response as hexadecimal
+log.info(&quot;Response (Hexadecimal): &quot; + responseDataHex)
+
+// Log response length
+    int responseLength = responseDataHex.length()
+    int responseSizeInBytes = responseBytes.size()
+    vars.putObject(&apos;responseLength&apos;, responseLength)
+	vars.putObject(&apos;responseSizeInBytes&apos;, responseSizeInBytes)
+    log.info(&quot;Response Length (Hexadecimal)(400-2): &quot; + responseLength)
+    log.info(&quot;Response Length (Bytes)(400-2): &quot; + responseSizeInBytes)
+
+// Set response data for the sampler
+SampleResult.setResponseData(responseDataHex, &quot;UTF-8&quot;)
+}else { log.warn(&quot;SSL Socket not found in context. Ensure the PreProcessor executed correctly.&quot;)}
+// Close streams and socket
+//inputStream.close()
+//outputStream.close()
+//sslSocket.close()</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223Sampler>
+            <hashTree>
+              <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR223 Assertion" enabled="true">
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="script">import org.apache.jmeter.assertions.AssertionResult
+//int responseLength = vars.getObject(&quot;responseLength&quot;)
+//int responseSizeInBytes = vars.getObject(&quot;responseSizeInBytes&quot;)
+def minLength = 50
+def responseLength = vars.getObject(&quot;responseLength&quot;)
+def responseSizeInBytes = vars.getObject(&quot;responseSizeInBytes&quot;)
+
+def assertionResult = new org.apache.jmeter.assertions.AssertionResult(&quot;Response Length Assertion&quot;)
+
+if (responseLength &lt; minLength) {
+    // Set the assertion failure
+    prev.setSuccessful(false)
+    prev.setResponseMessage(&quot;Response length is less than expected.&quot;)
+} else {
+    // Clear any previous assertion failure
+    prev.setSuccessful(true)
+    prev.setResponseMessage(&quot;Response length meets expected criteria.&quot;)
+}
+</stringProp>
+                <stringProp name="scriptLanguage">groovy</stringProp>
+              </JSR223Assertion>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+      <TestFragmentController guiclass="TestFragmentControllerGui" testclass="TestFragmentController" testname="0200" enabled="true"/>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler 200">
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.InputStream
+import java.io.OutputStream
+
+// Retrieve the socket from the JMeter context
+SSLSocket sslSocket = vars.getObject(&quot;sslSocket&quot;)
+OutputStream outputStream = vars.getObject(&quot;sslOutputStream&quot;)
+InputStream inputStream = vars.getObject(&quot;sslInputStream&quot;)
+
+// Check if the socket is available
+if (sslSocket != null &amp;&amp; outputStream != null &amp;&amp; inputStream != null) {
+// Convert hexadecimal string to bytes
+String hexData= vars.get(&quot;Request_0200&quot;)
+
+// Example hexadecimal string
+byte[] requestData = hexData.decodeHex()
+
+// Send data
+//OutputStream outputStream = sslSocket.getOutputStream()
+outputStream.write(requestData)
+outputStream.flush()
+
+// Receive response
+//InputStream inputStream = sslSocket.getInputStream()
+def responseBytes = []
+byte[] buffer = new byte[1024]
+int bytesRead
+int totalBytesRead = 0
+int expectedLength = 90
+
+while (totalBytesRead &lt;= expectedLength) {
+    bytesRead = inputStream.read(buffer)
+    if (bytesRead == -1) break
+    responseBytes += buffer[0..(bytesRead - 1)]
+    totalBytesRead += bytesRead
+}
+// Convert response bytes to hexadecimal string
+String responseDataHex = responseBytes.collect { String.format(&apos;%02X&apos;, it) }.join()
+
+ // Log response length
+    int responseLength = responseDataHex.length()
+    int responseSizeInBytes = responseBytes.size()
+    vars.putObject(&apos;responseLength&apos;, responseLength)
+	vars.putObject(&apos;responseSizeInBytes&apos;, responseSizeInBytes)
+    log.info(&quot;Response Length (Hexadecimal)(Test Data 1 200): &quot; + responseLength)
+    log.info(&quot;Response Length (Bytes)(Test Data 1 200): &quot; + responseSizeInBytes)
+
+// Close streams and socket
+    inputStream.close()
+    outputStream.close()
+    sslSocket.close()
+    vars.remove(&quot;sslSocket&quot;)
+    vars.remove(&quot;sslOutputStream&quot;)
+    vars.remove(&quot;sslInputStream&quot;)
+// Set response data for the sampler
+SampleResult.setResponseData(responseDataHex, &quot;UTF-8&quot;)
+SampleResult.setDataType(org.apache.jmeter.samplers.SampleResult.TEXT)
+SampleResult.setResponseCode(&quot;200&quot;)
+SampleResult.setResponseMessage(&quot;OK&quot;)
+}else { log.warn(&quot;SSL Socket not found in context. Ensure the PreProcessor executed correctly.&quot;)}
+// Close streams and socket
+//inputStream.close()
+//outputStream.close()
+//sslSocket.close()</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Sampler>
+        <hashTree>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR223 Assertion" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">import org.apache.jmeter.assertions.AssertionResult
+//int responseLength = vars.getObject(&quot;responseLength&quot;)
+//int responseSizeInBytes = vars.getObject(&quot;responseSizeInBytes&quot;)
+def minLength = 50
+def responseLength = vars.getObject(&quot;responseLength&quot;)
+def responseSizeInBytes = vars.getObject(&quot;responseSizeInBytes&quot;)
+
+def assertionResult = new org.apache.jmeter.assertions.AssertionResult(&quot;Response Length Assertion&quot;)
+
+if (responseLength &lt; minLength) {
+    // Set the assertion failure
+    prev.setSuccessful(false)
+    prev.setResponseMessage(&quot;Response length is less than expected.&quot;)
+} else {
+    // Clear any previous assertion failure
+    prev.setSuccessful(true)
+    prev.setResponseMessage(&quot;Response length meets expected criteria.&quot;)
+}
+</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

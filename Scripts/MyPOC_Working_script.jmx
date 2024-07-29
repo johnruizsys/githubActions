@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan">
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="POS Device Activation">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">stopthread</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <TCPSampler guiclass="TCPSamplerGui" testclass="TCPSampler" testname="Testdata1 - 200">
+          <stringProp name="TCPSampler.classname">BinaryTCPClientImpl</stringProp>
+          <stringProp name="TCPSampler.server">demopos2.mypos.com</stringProp>
+          <boolProp name="TCPSampler.reUseConnection">true</boolProp>
+          <stringProp name="TCPSampler.port">44433</stringProp>
+          <stringProp name="TCPSampler.timeout"></stringProp>
+          <stringProp name="TCPSampler.ctimeout">10000</stringProp>
+          <stringProp name="TCPSampler.request">02C2A000040004575712443231303531353639333031FFFFFF5156930100464414526AF86DB7D1EC029A60002200000200B238060008C183680000000000240000000000000000000200052908072300002108072305290071303030303532393234303030303231383030323533333230303030303030313231343434303400115437383036202020202020097801355F2A0209785F340100820220008407A0000000031010950500000000009A032405299C01009F02060000000002009F03060000000000009F090200009F100706001203A020009F1A0203729F1E0835313536393330319F26080F2BB36F71E417A29F2701809F330360F8C89F34030000009F3501229F360200249F3704EEB61A0F9F410300002100064E3B56697361015020202020202020504F534445562054455354204D504C4455424C494E202020202020202020202020202020202020204952454C414E4420202020202061736431322041534441534441534420312041445341444153445448414E4B20594F55212020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020200058454E3B323B3B313B323B342E3133433B33303336323B30343838303530393034383430343835303532303038393730383833303438393B3B3B31001630303130303030303030333030333732000157018430303130303131303032303035343537353730303331363037303030304145423838463241463935354345333145364643453530424436383241373739364442314245344445423037324534373936373245344135453537323536443646433532443836393834454433383345364233343133444532423541314337323235444143463242324441443738333130394543394538344346363437384333314537314233363839333146394134423234463341313631313838</stringProp>
+          <boolProp name="TCPSampler.closeConnection">false</boolProp>
+          <stringProp name="ConfigTestElement.username"></stringProp>
+          <stringProp name="ConfigTestElement.password"></stringProp>
+        </TCPSampler>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.KeyManagerFactory
+import java.security.KeyStore
+import java.net.Socket
+import java.net.InetSocketAddress
+import java.io.OutputStream
+import java.io.InputStream
+
+// Configuration parameters
+def keystoreFile = &apos;C:/Program Files/Java/jdk-22/lib/security/MyPOS.jks&apos;
+def keystorePassword = &apos;MyPOS2024&apos;
+def keyPassword = &apos;MyPOS2024&apos;
+def serverHost = &apos;demopos2.mypos.com&apos;
+def serverPort = 44433
+
+// Hexadecimal payload
+def hexPayload = &quot;02C2A000040004575712443231303531353639333031FFFFFF5156930100464414526AF86DB7D1EC029A60002200000200B238060008C183680000000000240000000000000000000200052908072300002108072305290071303030303532393234303030303231383030323533333230303030303030313231343434303400115437383036202020202020097801355F2A0209785F340100820220008407A0000000031010950500000000009A032405299C01009F02060000000002009F03060000000000009F090200009F100706001203A020009F1A0203729F1E0835313536393330319F26080F2BB36F71E417A29F2701809F330360F8C89F34030000009F3501229F360200249F3704EEB61A0F9F410300002100064E3B56697361015020202020202020504F534445562054455354204D504C4455424C494E202020202020202020202020202020202020204952454C414E4420202020202061736431322041534441534441534420312041445341444153445448414E4B20594F55212020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020200058454E3B323B3B313B323B342E3133433B33303336323B30343838303530393034383430343835303532303038393730383833303438393B3B3B31001630303130303030303030333030333732000157018430303130303131303032303035343537353730303331363037303030304145423838463241463935354345333145364643453530424436383241373739364442314245344445423037324534373936373245344135453537323536443646433532443836393834454433383345364233343133444532423541314337323235444143463242324441443738333130394543394538344346363437384333314537314233363839333146394134423234463341313631313838&quot;
+
+// Convert hex string to byte array
+byte[] requestData = hexPayload.decodeHex()
+
+// Load the keystore
+KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType())
+FileInputStream keyStoreStream = new FileInputStream(keystoreFile)
+keyStore.load(keyStoreStream, keystorePassword.toCharArray())
+
+// Set up the KeyManager and TrustManager
+KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
+kmf.init(keyStore, keyPassword.toCharArray())
+
+TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+tmf.init(keyStore)
+
+// Initialize the SSLContext
+SSLContext sslContext = SSLContext.getInstance(&quot;TLS&quot;)
+sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new java.security.SecureRandom())
+
+// Create the socket and connect
+SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory()
+Socket socket = sslSocketFactory.createSocket()
+socket.connect(new InetSocketAddress(serverHost, serverPort))
+
+// (Optional) Sending data to the server
+OutputStream outputStream = socket.getOutputStream()
+outputStream.write(&quot;GET / HTTP/1.1\r\nHost: ${serverHost}\r\n\r\n&quot;.getBytes())
+outputStream.flush()
+</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <KeystoreConfig guiclass="TestBeanGUI" testclass="KeystoreConfig" testname="Keystore Configuration" enabled="false">
+            <stringProp name="clientCertAliasVarName">MYPOSCERT</stringProp>
+            <stringProp name="endIndex">100</stringProp>
+            <stringProp name="preload">True</stringProp>
+            <stringProp name="startIndex">0</stringProp>
+          </KeystoreConfig>
+          <hashTree/>
+        </hashTree>
+        <TCPSampler guiclass="TCPSamplerGui" testclass="TCPSampler" testname="TCP Sampler">
+          <stringProp name="TCPSampler.server"></stringProp>
+          <boolProp name="TCPSampler.reUseConnection">true</boolProp>
+          <stringProp name="TCPSampler.port"></stringProp>
+          <boolProp name="TCPSampler.nodelay">false</boolProp>
+          <stringProp name="TCPSampler.timeout"></stringProp>
+          <stringProp name="TCPSampler.request"></stringProp>
+          <boolProp name="TCPSampler.closeConnection">false</boolProp>
+          <stringProp name="ConfigTestElement.username"></stringProp>
+          <stringProp name="ConfigTestElement.password"></stringProp>
+        </TCPSampler>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.KeyManagerFactory
+import java.security.KeyStore
+import java.net.Socket
+import java.net.InetSocketAddress
+import java.io.OutputStream
+import java.io.InputStream
+
+// Configuration parameters
+def keystoreFile = &apos;C:/Program Files/Java/jdk-22/lib/security/MyPOS.jks&apos;
+def keystorePassword = &apos;MyPOS2024&apos;
+def keyPassword = &apos;MyPOS2024&apos;
+def serverHost = &apos;demopos2.mypos.com&apos;
+def serverPort = 44433
+
+// Hexadecimal payload
+def hexPayload = &quot;02C2A000040004575712443231303531353639333031FFFFFF5156930100464414526AF86DB7D1EC029A60002200000200B238060008C183680000000000240000000000000000000200052908072300002108072305290071303030303532393234303030303231383030323533333230303030303030313231343434303400115437383036202020202020097801355F2A0209785F340100820220008407A0000000031010950500000000009A032405299C01009F02060000000002009F03060000000000009F090200009F100706001203A020009F1A0203729F1E0835313536393330319F26080F2BB36F71E417A29F2701809F330360F8C89F34030000009F3501229F360200249F3704EEB61A0F9F410300002100064E3B56697361015020202020202020504F534445562054455354204D504C4455424C494E202020202020202020202020202020202020204952454C414E4420202020202061736431322041534441534441534420312041445341444153445448414E4B20594F55212020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020200058454E3B323B3B313B323B342E3133433B33303336323B30343838303530393034383430343835303532303038393730383833303438393B3B3B31001630303130303030303030333030333732000157018430303130303131303032303035343537353730303331363037303030304145423838463241463935354345333145364643453530424436383241373739364442314245344445423037324534373936373245344135453537323536443646433532443836393834454433383345364233343133444532423541314337323235444143463242324441443738333130394543394538344346363437384333314537314233363839333146394134423234463341313631313838&quot;
+
+// Convert hex string to byte array
+byte[] requestData = hexPayload.decodeHex()
+
+// Load the keystore
+KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType())
+FileInputStream keyStoreStream = new FileInputStream(keystoreFile)
+keyStore.load(keyStoreStream, keystorePassword.toCharArray())
+
+// Set up the KeyManager and TrustManager
+KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
+kmf.init(keyStore, keyPassword.toCharArray())
+
+TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+tmf.init(keyStore)
+
+// Initialize the SSLContext
+SSLContext sslContext = SSLContext.getInstance(&quot;TLS&quot;)
+sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new java.security.SecureRandom())
+
+// Create the socket and connect
+SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory()
+Socket socket = sslSocketFactory.createSocket()
+socket.connect(new InetSocketAddress(serverHost, serverPort))
+
+// (Optional) Sending data to the server
+OutputStream outputStream = socket.getOutputStream()
+outputStream.write(&quot;GET / HTTP/1.1\r\nHost: ${serverHost}\r\n\r\n&quot;.getBytes())
+outputStream.flush()
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+        </hashTree>
+        <TCPSampler guiclass="TCPSamplerGui" testclass="TCPSampler" testname="Testdata1 - 320" enabled="false">
+          <stringProp name="TCPSampler.classname">BinaryTCPClientImpl</stringProp>
+          <stringProp name="TCPSampler.server">demopos2.mypos.com</stringProp>
+          <boolProp name="TCPSampler.reUseConnection">true</boolProp>
+          <stringProp name="TCPSampler.port">44433</stringProp>
+          <stringProp name="TCPSampler.timeout"></stringProp>
+          <stringProp name="TCPSampler.ctimeout">10000</stringProp>
+          <stringProp name="TCPSampler.request">0208A000040004575712443231303531353639333031FFFFFF51569301004645434E5DC0D9FD982101E060002200000320B23A06000CC1820800000040002400000000010000000002000529080729000022080723052920240529080729007130303034313530303730303138323056495353494D383030323533333230303030303030313231343434303400115437383036202020202020097801355F2A0209785F340100820220008407A0000000031010950500000000009A032405299C01009F02060000000002009F03060000000000009F090200009F100706001203A020009F1A0203729F1E0835313536393330319F26080F2BB36F71E417A29F2701809F330360F8C89F34030000009F3501229F360200249F3704EEB61A0F9F4103000021001630303130303030303030333030333732020000002105290807230000000000000000000000000157018430303130303131303032303035343537353730303331363037303030304145423838463241463935354345333145364643453530424436383241373739364442314245344445423037324534373936373245344135453537323536443646433532443836393834454433383345364233343133444532423541314337323235444143463242324441443738333130394543394538344346363437384333314537314233363839333146394134423234463341313631313838</stringProp>
+          <boolProp name="TCPSampler.closeConnection">false</boolProp>
+          <stringProp name="ConfigTestElement.username"></stringProp>
+          <stringProp name="ConfigTestElement.password"></stringProp>
+        </TCPSampler>
+        <hashTree>
+          <KeystoreConfig guiclass="TestBeanGUI" testclass="KeystoreConfig" testname="Keystore Configuration" enabled="true">
+            <stringProp name="clientCertAliasVarName">MYPOSCERT</stringProp>
+            <stringProp name="endIndex">100</stringProp>
+            <stringProp name="preload">True</stringProp>
+            <stringProp name="startIndex">0</stringProp>
+          </KeystoreConfig>
+          <hashTree/>
+        </hashTree>
+        <TCPSampler guiclass="TCPSamplerGui" testclass="TCPSampler" testname="Testdata2 - 200" enabled="false">
+          <stringProp name="TCPSampler.classname">BinaryTCPClientImpl</stringProp>
+          <stringProp name="TCPSampler.server">demopos2.mypos.com</stringProp>
+          <boolProp name="TCPSampler.reUseConnection">true</boolProp>
+          <stringProp name="TCPSampler.port">44433</stringProp>
+          <stringProp name="TCPSampler.timeout"></stringProp>
+          <stringProp name="TCPSampler.ctimeout">10000</stringProp>
+          <stringProp name="TCPSampler.request">02E2A000040004575712443231303531353639333031FFFFFF5156930100464666AD4B28615CEE1302BA60002200000200B238060008C1936800000000002400000000000000000180000529080848000023080848052900713030303035323932343030303032333830303235333332303030303030303132313434343034003554313032304646464646463531353639333031303030313133373830362020202020200978A0EBA98076B20D9F01355F2A0209785F340100820220008407A0000000031010950500000000009A032405299C01009F02060000000180009F03060000000000009F090200009F100706001203A020009F1A0203729F1E0835313536393330319F2608027BBC8D0EFDC8B19F2701809F330360F8C89F34030000009F3501229F360200259F37049A3AE4279F41030000230006503B56697361015020202020202020504F534445562054455354204D504C4455424C494E202020202020202020202020202020202020204952454C414E4420202020202061736431322041534441534441534420312041445341444153445448414E4B20594F55212020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020200058454E3B323B3B313B323B342E3133433B33303336323B30343838303530393034383430343835303532303038393730383833303438393B3B3B31001630303130303030303030333030333732000157018430303130303131303032303035343537353730303331363037303030304145423838463241463935354345333145364643453530424436383241373739364442314245344445423037324534373936373245344135453537323536443646433532443836393834454433383345364233343133444532423541314337323235444143463242324441443738333130394543394538344346363437384333314537314233363839333146394134423234463341313631313838</stringProp>
+          <boolProp name="TCPSampler.closeConnection">false</boolProp>
+          <stringProp name="ConfigTestElement.username"></stringProp>
+          <stringProp name="ConfigTestElement.password"></stringProp>
+        </TCPSampler>
+        <hashTree>
+          <KeystoreConfig guiclass="TestBeanGUI" testclass="KeystoreConfig" testname="Keystore Configuration" enabled="true">
+            <stringProp name="clientCertAliasVarName">MYPOSCERT</stringProp>
+            <stringProp name="endIndex">100</stringProp>
+            <stringProp name="preload">True</stringProp>
+            <stringProp name="startIndex">0</stringProp>
+          </KeystoreConfig>
+          <hashTree/>
+        </hashTree>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+          <boolProp name="ResultCollector.success_only_logging">true</boolProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>true</responseData>
+              <samplerData>false</samplerData>
+              <xml>true</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan">
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+    </TestPlan>
+    <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="Host" elementType="Argument">
+            <stringProp name="Argument.name">Host</stringProp>
+            <stringProp name="Argument.value">demopos1.mypos.com</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="Port" elementType="Argument">
+            <stringProp name="Argument.name">Port</stringProp>
+            <stringProp name="Argument.value">443</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="POS Device Activation" enabled="false">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">stopthread</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="MyPOSGlass_Acquiring">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="0320"/>
+        <hashTree>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="DataFile_320_DataSet_1" enabled="true">
+            <stringProp name="delimiter">,</stringProp>
+            <stringProp name="fileEncoding"></stringProp>
+            <stringProp name="filename">C:/Users/John.Ruiz.ENCORA/Documents/Scripts/Files/POS_320_DataSet1.csv</stringProp>
+            <boolProp name="ignoreFirstLine">false</boolProp>
+            <boolProp name="quotedData">false</boolProp>
+            <boolProp name="recycle">true</boolProp>
+            <stringProp name="shareMode">shareMode.all</stringProp>
+            <boolProp name="stopThread">false</boolProp>
+            <stringProp name="variableNames">Request_0200,Request_0320</stringProp>
+          </CSVDataSet>
+          <hashTree/>
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Controller" enabled="true">
+            <stringProp name="IfController.condition">${__javaScript(&quot;${Request_0200}&quot; != &quot;&quot;)}</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+            <boolProp name="IfController.useExpression">true</boolProp>
+          </IfController>
+          <hashTree>
+            <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SSLConnectionEstablishment" enabled="true">
+              <boolProp name="TransactionController.parent">true</boolProp>
+              <boolProp name="TransactionController.includeTimers">false</boolProp>
+            </TransactionController>
+            <hashTree>
+              <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="ConnectionEstablishment" enabled="true">
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.OutputStream
+import java.io.InputStream
+
+
+// Create SSLSocketFactory with the trust store
+SSLSocketFactory sslSocketFactory = SSLSocketFactory.getDefault()
+
+// Create SSLSocket and connect to the server
+SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(&quot;${Host}&quot;, ${Port})
+sslSocket.startHandshake()
+
+// Socket creation variable
+vars.putObject(&quot;sslSocket&quot;, sslSocket)
+
+// InputStream and OutputStream variables 
+vars.putObject(&quot;sslOutputStream&quot;, sslSocket.getOutputStream())
+vars.putObject(&quot;sslInputStream&quot;, sslSocket.getInputStream())</stringProp>
+              </JSR223Sampler>
+              <hashTree/>
+            </hashTree>
+            <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="POS_GlassTransaction_0320_01_MTI0200" enabled="true">
+              <boolProp name="TransactionController.parent">true</boolProp>
+              <boolProp name="TransactionController.includeTimers">false</boolProp>
+            </TransactionController>
+            <hashTree>
+              <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="0200">
+                <collectionProp name="ModuleController.node_path">
+                  <stringProp name="764597751">Test Plan</stringProp>
+                  <stringProp name="764597751">Test Plan</stringProp>
+                  <stringProp name="-501802776">MyPOSGlass_Acquiring</stringProp>
+                  <stringProp name="1479554">0200</stringProp>
+                </collectionProp>
+              </ModuleController>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Flow Control Action" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">1000</stringProp>
+          </TestAction>
+          <hashTree/>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SSLConnectionEstablishment" enabled="true">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="ConnectionEstablishment" enabled="true">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.OutputStream
+import java.io.InputStream
+
+
+// Create SSLSocketFactory with the trust store
+SSLSocketFactory sslSocketFactory = SSLSocketFactory.getDefault()
+
+// Create SSLSocket and connect to the server
+SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(&quot;${Host}&quot;, ${Port})
+sslSocket.startHandshake()
+
+// Socket creation variable
+vars.putObject(&quot;sslSocket&quot;, sslSocket)
+
+// InputStream and OutputStream variables 
+vars.putObject(&quot;sslOutputStream&quot;, sslSocket.getOutputStream())
+vars.putObject(&quot;sslInputStream&quot;, sslSocket.getInputStream())</stringProp>
+            </JSR223Sampler>
+            <hashTree/>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="POS_GlassTransaction_0320_02_MTI0320" enabled="true">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler 320" enabled="true">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.OutputStream
+import java.io.InputStream
+
+
+
+// Retrieve the socket from the JMeter context
+SSLSocket sslSocket = vars.getObject(&quot;sslSocket&quot;)
+OutputStream outputStream = vars.getObject(&quot;sslOutputStream&quot;)
+InputStream inputStream = vars.getObject(&quot;sslInputStream&quot;)
+
+// Check if the socket is available
+if (sslSocket != null &amp;&amp; outputStream != null &amp;&amp; inputStream != null) {
+// Convert hexadecimal string to bytes
+String hexData = vars.get(&quot;Request_0320&quot;)
+// Example hexadecimal string
+byte[] requestData = hexData.decodeHex()
+
+// Send data
+//OutputStream outputStream = sslSocket.getOutputStream()
+outputStream.write(requestData)
+outputStream.flush()
+
+// Receive response
+//InputStream inputStream = sslSocket.getInputStream()
+def responseBytes = []
+byte[] buffer = new byte[1024]
+int bytesRead
+int totalBytesRead = 0
+int expectedLength = 100
+
+while (totalBytesRead &lt;= expectedLength) {
+    bytesRead = inputStream.read(buffer)
+    if (bytesRead == -1) break
+    responseBytes += buffer[0..(bytesRead - 1)]
+    totalBytesRead += bytesRead
+}
+
+// Convert response bytes to hexadecimal string
+String responseDataHex = responseBytes.collect { String.format(&apos;%02X&apos;, it) }.join()
+
+// Close streams and socket
+    inputStream.close()
+    outputStream.close()
+    sslSocket.close()
+    vars.remove(&quot;sslSocket&quot;)
+    vars.remove(&quot;sslOutputStream&quot;)
+    vars.remove(&quot;sslInputStream&quot;)
+// Log response as hexadecimal
+log.info(&quot;Response (Hexadecimal): &quot; + responseDataHex)
+
+ // Log response length
+    int responseLengthInHex = responseDataHex.length()
+    int responseLengthInBytes = responseBytes.size()
+    log.info(&quot;Response Length (Hexadecimal)(Test Data 1 320): &quot; + responseLengthInHex)
+    log.info(&quot;Response Length (Bytes)(Test Data 1 320): &quot; + responseLengthInBytes)
+
+// Set response data for the sampler
+SampleResult.setResponseData(responseDataHex, &quot;UTF-8&quot;)
+
+}else { log.warn(&quot;SSL Socket not found in context. Ensure the PreProcessor executed correctly.&quot;)}
+// Close streams and socket
+//inputStream.close()
+//outputStream.close()
+//sslSocket.close()</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223Sampler>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="45815556">0098C</stringProp>
+                  <stringProp name="1477919">0098</stringProp>
+                  <stringProp name="1477888">0088</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.custom_message"></stringProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">34</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="0400" enabled="true"/>
+        <hashTree>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="POS_400_DataSet3" enabled="true">
+            <stringProp name="filename">C:/Users/John.Ruiz.ENCORA/Documents/Scripts/Files/POS_400_DataSet3.csv</stringProp>
+            <stringProp name="fileEncoding"></stringProp>
+            <stringProp name="variableNames">Request_0200,Request_0400</stringProp>
+            <boolProp name="ignoreFirstLine">false</boolProp>
+            <stringProp name="delimiter">,</stringProp>
+            <boolProp name="quotedData">false</boolProp>
+            <boolProp name="recycle">true</boolProp>
+            <boolProp name="stopThread">false</boolProp>
+            <stringProp name="shareMode">shareMode.all</stringProp>
+          </CSVDataSet>
+          <hashTree/>
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Controller">
+            <stringProp name="IfController.condition">${__javaScript(&quot;${Request_0200}&quot; != &quot;&quot;)}</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+            <boolProp name="IfController.useExpression">true</boolProp>
+          </IfController>
+          <hashTree>
+            <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SSLConnectionEstablishment">
+              <boolProp name="TransactionController.parent">true</boolProp>
+              <boolProp name="TransactionController.includeTimers">false</boolProp>
+            </TransactionController>
+            <hashTree>
+              <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="ConnectionEstablishment" enabled="true">
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.OutputStream
+import java.io.InputStream
+
+
+// Create SSLSocketFactory with the trust store
+SSLSocketFactory sslSocketFactory = SSLSocketFactory.getDefault()
+
+// Create SSLSocket and connect to the server
+SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(&quot;${Host}&quot;, ${Port})
+sslSocket.startHandshake()
+
+// Socket creation variable
+vars.putObject(&quot;sslSocket&quot;, sslSocket)
+
+// InputStream and OutputStream variables 
+vars.putObject(&quot;sslOutputStream&quot;, sslSocket.getOutputStream())
+vars.putObject(&quot;sslInputStream&quot;, sslSocket.getInputStream())</stringProp>
+              </JSR223Sampler>
+              <hashTree/>
+            </hashTree>
+            <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="POS_GlassTransaction_0400_01_MTI0200">
+              <boolProp name="TransactionController.parent">true</boolProp>
+              <boolProp name="TransactionController.includeTimers">false</boolProp>
+            </TransactionController>
+            <hashTree>
+              <ModuleController guiclass="ModuleControllerGui" testclass="ModuleController" testname="0200">
+                <collectionProp name="ModuleController.node_path">
+                  <stringProp name="764597751">Test Plan</stringProp>
+                  <stringProp name="764597751">Test Plan</stringProp>
+                  <stringProp name="-501802776">MyPOSGlass_Acquiring</stringProp>
+                  <stringProp name="1479554">0200</stringProp>
+                </collectionProp>
+              </ModuleController>
+              <hashTree/>
+            </hashTree>
+            <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Flow Control Action" enabled="true">
+              <intProp name="ActionProcessor.action">1</intProp>
+              <intProp name="ActionProcessor.target">0</intProp>
+              <stringProp name="ActionProcessor.duration">1000</stringProp>
+            </TestAction>
+            <hashTree/>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SSLConnectionEstablishment" enabled="true">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="ConnectionEstablishment" enabled="true">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.OutputStream
+import java.io.InputStream
+
+
+// Create SSLSocketFactory with the trust store
+SSLSocketFactory sslSocketFactory = SSLSocketFactory.getDefault()
+
+// Create SSLSocket and connect to the server
+SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(&quot;${Host}&quot;, ${Port})
+sslSocket.startHandshake()
+
+// Socket creation variable
+vars.putObject(&quot;sslSocket&quot;, sslSocket)
+
+// InputStream and OutputStream variables 
+vars.putObject(&quot;sslOutputStream&quot;, sslSocket.getOutputStream())
+vars.putObject(&quot;sslInputStream&quot;, sslSocket.getInputStream())</stringProp>
+            </JSR223Sampler>
+            <hashTree/>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="POS_GlassTransaction_0400_02_MTI0400" enabled="true">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler 400" enabled="true">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.OutputStream
+import java.io.InputStream
+
+// Retrieve the socket from the JMeter context
+SSLSocket sslSocket = vars.getObject(&quot;sslSocket&quot;)
+OutputStream outputStream = vars.getObject(&quot;sslOutputStream&quot;)
+InputStream inputStream = vars.getObject(&quot;sslInputStream&quot;)
+
+// Check if the socket is available
+if (sslSocket != null &amp;&amp; outputStream != null &amp;&amp; inputStream != null) {
+// Convert hexadecimal string to bytes
+String hexData = vars.get(&quot;Request_0400&quot;)
+// Example hexadecimal string
+byte[] requestData = hexData.decodeHex()
+
+// Send data
+//OutputStream outputStream = sslSocket.getOutputStream()
+outputStream.write(requestData)
+outputStream.flush()
+
+// Receive response
+//InputStream inputStream = sslSocket.getInputStream()
+
+def responseBytes = []
+byte[] buffer = new byte[1024]
+int bytesRead
+int totalBytesRead = 0
+int expectedLength = 90
+
+while (totalBytesRead &lt;= expectedLength) {
+    bytesRead = inputStream.read(buffer)
+    if (bytesRead == -1) break
+    responseBytes += buffer[0..(bytesRead - 1)]
+    totalBytesRead += bytesRead
+}
+
+// Convert response bytes to hexadecimal string
+String responseDataHex = responseBytes.collect { String.format(&apos;%02X&apos;, it) }.join()
+
+// Log response as hexadecimal
+log.info(&quot;Response (Hexadecimal): &quot; + responseDataHex)
+
+// Log response length
+    int responseLengthInHex = responseDataHex.length()
+    int responseLengthInBytes = responseBytes.size()
+    log.info(&quot;Response Length (Hexadecimal)(400-2): &quot; + responseLengthInHex)
+    log.info(&quot;Response Length (Bytes)(400-2): &quot; + responseLengthInBytes)
+
+// Set response data for the sampler
+SampleResult.setResponseData(responseDataHex, &quot;UTF-8&quot;)
+}else { log.warn(&quot;SSL Socket not found in context. Ensure the PreProcessor executed correctly.&quot;)}
+// Close streams and socket
+//inputStream.close()
+//outputStream.close()
+//sslSocket.close()</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223Sampler>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="1477888">0088</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.custom_message"></stringProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+        <TestFragmentController guiclass="TestFragmentControllerGui" testclass="TestFragmentController" testname="0200"/>
+        <hashTree>
+          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler 200" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.InputStream
+import java.io.OutputStream
+
+// Retrieve the socket from the JMeter context
+SSLSocket sslSocket = vars.getObject(&quot;sslSocket&quot;)
+OutputStream outputStream = vars.getObject(&quot;sslOutputStream&quot;)
+InputStream inputStream = vars.getObject(&quot;sslInputStream&quot;)
+
+// Check if the socket is available
+if (sslSocket != null &amp;&amp; outputStream != null &amp;&amp; inputStream != null) {
+// Convert hexadecimal string to bytes
+String hexData= vars.get(&quot;Request_0200&quot;)
+
+// Example hexadecimal string
+byte[] requestData = hexData.decodeHex()
+
+// Send data
+//OutputStream outputStream = sslSocket.getOutputStream()
+outputStream.write(requestData)
+outputStream.flush()
+
+// Receive response
+//InputStream inputStream = sslSocket.getInputStream()
+def responseBytes = []
+byte[] buffer = new byte[1024]
+int bytesRead
+int totalBytesRead = 0
+int expectedLength = 90
+
+while (totalBytesRead &lt;= expectedLength) {
+    bytesRead = inputStream.read(buffer)
+    if (bytesRead == -1) break
+    responseBytes += buffer[0..(bytesRead - 1)]
+    totalBytesRead += bytesRead
+}
+// Convert response bytes to hexadecimal string
+String responseDataHex = responseBytes.collect { String.format(&apos;%02X&apos;, it) }.join()
+
+ // Log response length
+    int responseLengthInHex = responseDataHex.length()
+    int responseLengthInBytes = responseBytes.size()
+    log.info(&quot;Response Length (Hexadecimal)(Test Data 1 200): &quot; + responseLengthInHex)
+    log.info(&quot;Response Length (Bytes)(Test Data 1 200): &quot; + responseLengthInBytes)
+
+// Close streams and socket
+    inputStream.close()
+    outputStream.close()
+    sslSocket.close()
+    vars.remove(&quot;sslSocket&quot;)
+    vars.remove(&quot;sslOutputStream&quot;)
+    vars.remove(&quot;sslInputStream&quot;)
+// Set response data for the sampler
+SampleResult.setResponseData(responseDataHex, &quot;UTF-8&quot;)
+SampleResult.setDataType(org.apache.jmeter.samplers.SampleResult.TEXT)
+SampleResult.setResponseCode(&quot;200&quot;)
+SampleResult.setResponseMessage(&quot;OK&quot;)
+}else { log.warn(&quot;SSL Socket not found in context. Ensure the PreProcessor executed correctly.&quot;)}
+// Close streams and socket
+//inputStream.close()
+//outputStream.close()
+//sslSocket.close()</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223Sampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="45842464">0168C</stringProp>
+                <stringProp name="47703">018</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">34</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+      </hashTree>
+      <TestFragmentController guiclass="TestFragmentControllerGui" testclass="TestFragmentController" testname="0200" enabled="false"/>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler 200" enabled="false">
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import java.io.InputStream
+import java.io.OutputStream
+
+// Retrieve the socket from the JMeter context
+SSLSocket sslSocket = vars.getObject(&quot;sslSocket&quot;)
+OutputStream outputStream = vars.getObject(&quot;sslOutputStream&quot;)
+InputStream inputStream = vars.getObject(&quot;sslInputStream&quot;)
+
+// Check if the socket is available
+if (sslSocket != null &amp;&amp; outputStream != null &amp;&amp; inputStream != null) {
+// Convert hexadecimal string to bytes
+String hexData= vars.get(&quot;Request_0200&quot;)
+
+// Example hexadecimal string
+byte[] requestData = hexData.decodeHex()
+
+// Send data
+//OutputStream outputStream = sslSocket.getOutputStream()
+outputStream.write(requestData)
+outputStream.flush()
+
+// Receive response
+//InputStream inputStream = sslSocket.getInputStream()
+def responseBytes = []
+byte[] buffer = new byte[1024]
+int bytesRead
+int totalBytesRead = 0
+int expectedLength = 90
+
+while (totalBytesRead &lt;= expectedLength) {
+    bytesRead = inputStream.read(buffer)
+    if (bytesRead == -1) break
+    responseBytes += buffer[0..(bytesRead - 1)]
+    totalBytesRead += bytesRead
+}
+// Convert response bytes to hexadecimal string
+String responseDataHex = responseBytes.collect { String.format(&apos;%02X&apos;, it) }.join()
+
+ // Log response length
+    int responseLengthInHex = responseDataHex.length()
+    int responseLengthInBytes = responseBytes.size()
+    log.info(&quot;Response Length (Hexadecimal)(Test Data 1 200): &quot; + responseLengthInHex)
+    log.info(&quot;Response Length (Bytes)(Test Data 1 200): &quot; + responseLengthInBytes)
+
+// Close streams and socket
+    inputStream.close()
+    outputStream.close()
+    sslSocket.close()
+    vars.remove(&quot;sslSocket&quot;)
+    vars.remove(&quot;sslOutputStream&quot;)
+    vars.remove(&quot;sslInputStream&quot;)
+// Set response data for the sampler
+SampleResult.setResponseData(responseDataHex, &quot;UTF-8&quot;)
+SampleResult.setDataType(org.apache.jmeter.samplers.SampleResult.TEXT)
+SampleResult.setResponseCode(&quot;200&quot;)
+SampleResult.setResponseMessage(&quot;OK&quot;)
+}else { log.warn(&quot;SSL Socket not found in context. Ensure the PreProcessor executed correctly.&quot;)}
+// Close streams and socket
+//inputStream.close()
+//outputStream.close()
+//sslSocket.close()</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Sampler>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="45842464">0168C</stringProp>
+              <stringProp name="47703">018</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">34</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>true</responseData>
+            <samplerData>false</samplerData>
+            <xml>true</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
