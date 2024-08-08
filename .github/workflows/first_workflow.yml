@@ -17,6 +17,8 @@ on:
         required: true
         # The data type of the input
         type: string
+                      
+         
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -30,3 +32,18 @@ jobs:
     # Runs a single command using the runners shell
     - name: Send greeting
       run: echo "Hello ${{ inputs.name }}"
+    - name: Get Code
+      uses: actions/checkout@v3
+    - name: PerfAction for JMeter        
+      uses: QAInsights/PerfAction@v5.6.2
+      with:
+            test-plan-path: ./Scripts/MyPOS_POC_Glass_Final.jmx
+            args: ""
+    - name: Upload Results
+      uses: actions/upload-artifact@v3
+      with:
+        name: jmeter-results
+        path: result.jtl
+        if-no-files-found: error
+    
+      
