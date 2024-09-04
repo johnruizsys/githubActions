@@ -25,6 +25,8 @@ jobs:
   jmeter-job:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    outputs:
+      script-file: ${{ steps.publish.outputs.something}}
     steps:
     - name: Get Code
       uses: actions/checkout@v3
@@ -33,6 +35,9 @@ jobs:
       with:
             test-plan-path: ./Scripts/MyPOS_POC_Glass_Final.jmx
             args: ""
+    - name: Publish JMX file
+      id: publish
+      run: find ./Scripts/MyPOS_POC_Glass_Final.jmx -type f -execdir echo 'something={}' >> $GITHUB_OUTPUT ';'
     - name: Upload results
       uses: actions/upload-artifact@v3
       with:
@@ -49,7 +54,6 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: jmeter-results
-        path: results.jtl
     - name: Get Code
       uses: actions/checkout@v3
     - name: Install NodeJS
