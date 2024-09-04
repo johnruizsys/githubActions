@@ -1,0 +1,17 @@
+{
+  "name": "automation-framework",
+  "version": "1.0.0",
+  "description": "cypress automation framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "John R.",
+  "license": "ISC",
+  "dependencies": {
+    "ansi-colors": "^4.1.3"
+  },
+  "devDependencies": {
+    "cypress": "^13.14.0"
+  }
+}
