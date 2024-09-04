@@ -67,7 +67,7 @@ jobs:
       with:
         build: npm run build
         start: npm start
-      working-directory: ./automation-framework
+        working-directory: ./automation-framework
     - name: Build
       run: echo "Building project"
 
