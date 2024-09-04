@@ -33,12 +33,11 @@ jobs:
       with:
             test-plan-path: ./Scripts/MyPOS_POC_Glass_Final.jmx
             args: ""
-    - name: Upload Results
+    - name: Upload results
       uses: actions/upload-artifact@v3
       with:
         name: jmeter-results
-        path: result.jtl
-        if-no-files-found: error
+        path: results.jtl
 
   cypress-job:
     needs: jmeter-job
