@@ -25,6 +25,7 @@ jobs:
   jmeter-job:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    
     outputs:
       script-file: ${{ steps.publish.outputs.something}}
     steps:
@@ -49,6 +50,8 @@ jobs:
     needs: jmeter-job
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    container:
+    image: cypress/included:10.10.0
     steps:
     - name: Download artifacts
       uses: actions/download-artifact@v3
@@ -62,13 +65,19 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 20
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
     - name: Install dependencies
       run: npm install
       working-directory: ./automation-framework
+    
     - name: Cypress run
       uses: cypress-io/github-action@v5
       with:
-        build: npm run build
+        #build: npm run build
         start: npm start
         working-directory: ./automation-framework
     - name: Build
