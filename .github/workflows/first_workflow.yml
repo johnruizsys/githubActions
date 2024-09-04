@@ -33,7 +33,7 @@ jobs:
     - name: PerfAction for JMeter        
       uses: QAInsights/PerfAction@v5.6.2
       with:
-            test-plan-path: ./Scripts/MyPOS_POC_Glass_Final.jmx
+            test-plan-path: Scripts/MyPOS_POC_Glass_Final.jmx
             args: ""
     - name: Publish JMX file
       id: publish
